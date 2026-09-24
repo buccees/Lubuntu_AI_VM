@@ -8,43 +8,46 @@ Create a self-contained Linux environment that can be carried on removable stora
 
 ## Current Status
 
-The Lubuntu VM has been created and the full Lubuntu installation has been started.
+The Lubuntu VM is installed and has been successfully booted from the existing virtual disk without the installer ISO.
 
-The installation reached approximately **90%** during the current session.
+The portable QEMU bundle is also working again. The original matching QEMU executable and DLL set are preserved in `QEMU\`.
 
-## Tomorrow — Handoff
+## Starting Lubuntu
 
-**Do not start a new installation yet.**
+The VM is persistent: changes made inside Lubuntu are stored in `LubuntuVM.img`. The startup command below can be used again each time, as long as the portable drive keeps the same drive letter and the files remain in the same locations.
 
-1. Preserve the existing `LubuntuVM.img`.
-2. Start QEMU using the existing virtual disk.
-3. First attempt to boot the installed system **without the ISO**.
-4. If it does not boot, inspect the existing virtual disk before reinstalling.
-5. Only reinstall if the existing installation is unusable.
-6. Once Lubuntu boots successfully, copy the complete VM environment to the portable SSD.
-7. Then begin setting up the custom AI environment.
-
-### Direct Boot Command
-
-Use this to test the existing virtual disk without the installer ISO:
+Open Command Prompt and run:
 
 ```cmd
+E:
+cd \QEMU
 qemu-system-x86_64.exe -accel tcg -m 3G -smp 2 -vga std -global isa-fdc.fdtypeA=none -global isa-fdc.fdtypeB=none -drive file="E:\LubuntuVM.img",format=raw,if=ide -boot order=c
 ```
 
-## Working Installer Command
+This boots the installed Lubuntu system directly from `LubuntuVM.img`. QEMU's x86 system emulator is launched with `qemu-system-x86_64` and accepts the disk image and boot options on the command line. citeturn0search0turn0search1
 
-If the ISO is needed again, this is the known-good configuration:
+### Important
+
+- Do **not** recreate or delete `LubuntuVM.img`.
+- Do **not** attach the Lubuntu ISO when performing a normal startup.
+- The portable QEMU directory contains the matching executable and DLLs needed by this setup.
+- If Windows assigns the removable drive a different letter, update the drive letter in the command accordingly.
+
+## Installer Command
+
+The installer ISO is only needed if a future reinstall is deliberately required. The known-good installer configuration is:
 
 ```cmd
 qemu-system-x86_64.exe -accel tcg -m 3G -smp 2 -vga std -global isa-fdc.fdtypeA=none -global isa-fdc.fdtypeB=none -drive file="E:\LubuntuVM.img",format=raw,if=ide -cdrom "E:\lubuntu-26.04.1-desktop-amd64.iso" -boot order=d
 ```
 
+Do not use this command for normal startup.
+
 ## Files
 
 - `QEMU\` — portable QEMU executable and required DLLs
 - `lubuntu-26.04.1-desktop-amd64.iso` — Lubuntu installer
-- `LubuntuVM.img` — virtual hard disk containing the Lubuntu installation
+- `LubuntuVM.img` — persistent virtual hard disk containing the Lubuntu installation
 
 ## Long-Term Plan
 
